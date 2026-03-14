@@ -1,0 +1,161 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773425100249,
+  "projectRoot": "/Users/libre/code/python/camoufox-mcp",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {},
+  "hotPaths": [
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright",
+      "accessCount": 18,
+      "lastAccessed": 1773427103655,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/camoufox",
+      "accessCount": 17,
+      "lastAccessed": 1773427095041,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 15,
+      "lastAccessed": 1773427043312,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/camoufox/async_api.py",
+      "accessCount": 11,
+      "lastAccessed": 1773427114364,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl/_browser_type.py",
+      "accessCount": 10,
+      "lastAccessed": 1773427131558,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/camoufox/utils.py",
+      "accessCount": 10,
+      "lastAccessed": 1773427151581,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/protocol.yml",
+      "accessCount": 5,
+      "lastAccessed": 1773427082803,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib/client/page.js",
+      "accessCount": 5,
+      "lastAccessed": 1773427164495,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/camoufox/__init__.py",
+      "accessCount": 4,
+      "lastAccessed": 1773427066360,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/async_api/_generated.py",
+      "accessCount": 4,
+      "lastAccessed": 1773427151632,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib/server/agent/context.js",
+      "accessCount": 3,
+      "lastAccessed": 1773426920973,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib/server/page.js",
+      "accessCount": 3,
+      "lastAccessed": 1773427082870,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib/server/dispatchers/pageDispatcher.js",
+      "accessCount": 3,
+      "lastAccessed": 1773427094978,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl/_connection.py",
+      "accessCount": 3,
+      "lastAccessed": 1773427180149,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl/_browser_context.py",
+      "accessCount": 3,
+      "lastAccessed": 1773427189934,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl/_page.py",
+      "accessCount": 2,
+      "lastAccessed": 1773426302846,
+      "type": "file"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages",
+      "accessCount": 2,
+      "lastAccessed": 1773426921035,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl",
+      "accessCount": 2,
+      "lastAccessed": 1773427126139,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib",
+      "accessCount": 1,
+      "lastAccessed": 1773426252840,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/driver/package/lib/server",
+      "accessCount": 1,
+      "lastAccessed": 1773426939949,
+      "type": "directory"
+    },
+    {
+      "path": ".venv/lib/python3.12/site-packages/playwright/_impl/_helper.py",
+      "accessCount": 1,
+      "lastAccessed": 1773427131507,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

@@ -1,0 +1,13 @@
+{
+  "active": true,
+  "current_phase": "execution-bridge",
+  "current_ambiguity": "0.155",
+  "rounds_completed": "9",
+  "spec_path": ".omc/specs/deep-interview-camoufox-mcp.md",
+  "_meta": {
+    "mode": "deep-interview",
+    "sessionId": "di-camoufox-mcp-001",
+    "updatedAt": "2026-03-13T17:34:03.830Z",
+    "updatedBy": "state_write_tool"
+  }
+}

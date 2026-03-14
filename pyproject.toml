@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "camoufox-mcp-python"
+version = "0.1.0"
+description = "Camoufox-powered MCP browser server with ref-based accessibility tools."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Codex" }
+]
+dependencies = [
+  "camoufox>=0.4.11,<0.5",
+  "mcp[cli]>=1.25,<2",
+  "playwright>=1.58,<1.59",
+]
+
+[project.scripts]
+camoufox-mcp-python = "camoufox_mcp.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["camoufox_mcp"]
