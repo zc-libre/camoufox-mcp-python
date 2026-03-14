@@ -59,6 +59,14 @@ claude mcp add camoufox -- uvx camoufox-mcp-python --headless
 }
 ```
 
+### 在 Codex CLI 中使用
+
+添加到 `codex.json` 或通过命令行传入：
+
+```bash
+codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --headless"
+```
+
 ### 固定版本号
 
 ```json

@@ -1,5 +1,7 @@
 # camoufox-mcp-python
 
+[中文文档](README_zh.md)
+
 [![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/camoufox-mcp-python)](https://pypi.org/project/camoufox-mcp-python/)
@@ -57,6 +59,14 @@ Add to `.vscode/mcp.json`:
     }
   }
 }
+```
+
+### Use with Codex CLI
+
+Add to `codex.json` or pass via CLI:
+
+```bash
+codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --headless"
 ```
 
 ### Pin a specific version
