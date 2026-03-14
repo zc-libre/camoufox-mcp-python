@@ -28,6 +28,10 @@ ENV/
 *.swp
 *.swo
 
+# Claude / OMC
+.claude/
+.omc/
+
 # OS
 .DS_Store
 Thumbs.db
