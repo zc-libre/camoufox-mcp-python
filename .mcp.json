@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "camoufox-mcp": {
+      "command": "/Users/libre/code/python/camoufox-mcp/.venv/bin/python",
+      "args": ["-m", "camoufox_mcp", "--headless"]
+    }
+  }
+}
