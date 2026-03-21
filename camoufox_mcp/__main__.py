@@ -39,7 +39,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--window",
         help="Outer window size, for example 1280x720.",
     )
-    parser.add_argument("--headless", action="store_true", help="Run the browser headlessly.")
+    parser.add_argument(
+        "--headless",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Run the browser headlessly (default: on).",
+    )
     parser.add_argument(
         "--block-webrtc",
         action=argparse.BooleanOptionalAction,

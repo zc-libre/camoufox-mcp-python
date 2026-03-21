@@ -40,7 +40,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["camoufox-mcp-python", "--headless"]
+      "args": ["camoufox-mcp-python"]
     }
   }
 }
@@ -49,7 +49,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 ### Use with Claude Code
 
 ```bash
-claude mcp add camoufox -- uvx camoufox-mcp-python --headless
+claude mcp add camoufox -- uvx camoufox-mcp-python
 ```
 
 ### Use with VS Code / Cursor
@@ -61,7 +61,7 @@ Add to `.vscode/mcp.json`:
   "servers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["camoufox-mcp-python", "--headless"]
+      "args": ["camoufox-mcp-python"]
     }
   }
 }
@@ -72,7 +72,7 @@ Add to `.vscode/mcp.json`:
 Add to `codex.json` or pass via CLI:
 
 ```bash
-codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --headless"
+codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python"
 ```
 
 ### Pin a specific version
@@ -82,7 +82,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python", "--headless"]
+      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python"]
     }
   }
 }
@@ -92,7 +92,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 
 | Option | Description |
 |---|---|
-| `--headless` | Run the browser in headless mode |
+| `--headless / --no-headless` | Run the browser headlessly (default: on) |
 | `--proxy <url>` | Proxy server URL (supports `user:pass@host:port`) |
 | `--os <os>` | Target OS fingerprint: `windows`, `macos`, `linux` (repeatable) |
 | `--humanize [seconds]` | Cursor humanization (default: on). Pass a number for max duration, or `false` to disable |
@@ -117,29 +117,32 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 ### Examples
 
 ```bash
-# Zero-config anti-detection (humanize + block-webrtc on by default)
-camoufox-mcp-python --headless
+# Zero-config anti-detection (headless + humanize + block-webrtc on by default)
+camoufox-mcp-python
 
 # With proxy and GeoIP matching
-camoufox-mcp-python --headless --proxy http://user:pass@proxy.example.com:8080 --geoip
+camoufox-mcp-python --proxy http://user:pass@proxy.example.com:8080 --geoip
+
+# Visible browser for debugging
+camoufox-mcp-python --no-headless --debug
 
 # Custom WebGL fingerprint
-camoufox-mcp-python --headless --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
+camoufox-mcp-python --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
 
 # Custom fingerprint properties
-camoufox-mcp-python --headless --config '{"navigator.hardwareConcurrency": 8}'
+camoufox-mcp-python --config '{"navigator.hardwareConcurrency": 8}'
 
 # With caching and custom Firefox prefs
-camoufox-mcp-python --headless --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
+camoufox-mcp-python --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
 
 # Privacy-hardened mode
-camoufox-mcp-python --headless --block-webgl --block-images
+camoufox-mcp-python --block-webgl --block-images
 
 # Disable default anti-detection for debugging
-camoufox-mcp-python --humanize false --no-block-webrtc --debug
+camoufox-mcp-python --no-headless --humanize false --no-block-webrtc --debug
 
 # Enable JavaScript evaluation
-camoufox-mcp-python --headless --caps dangerous
+camoufox-mcp-python --caps dangerous
 ```
 
 ## Available Tools

@@ -38,7 +38,7 @@
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["camoufox-mcp-python", "--headless"]
+      "args": ["camoufox-mcp-python"]
     }
   }
 }
@@ -47,7 +47,7 @@
 ### 在 Claude Code 中使用
 
 ```bash
-claude mcp add camoufox -- uvx camoufox-mcp-python --headless
+claude mcp add camoufox -- uvx camoufox-mcp-python
 ```
 
 ### 在 VS Code / Cursor 中使用
@@ -59,7 +59,7 @@ claude mcp add camoufox -- uvx camoufox-mcp-python --headless
   "servers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["camoufox-mcp-python", "--headless"]
+      "args": ["camoufox-mcp-python"]
     }
   }
 }
@@ -70,7 +70,7 @@ claude mcp add camoufox -- uvx camoufox-mcp-python --headless
 添加到 `codex.json` 或通过命令行传入：
 
 ```bash
-codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --headless"
+codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python"
 ```
 
 ### 固定版本号
@@ -80,7 +80,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python", "--headless"]
+      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python"]
     }
   }
 }
@@ -90,7 +90,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 
 | 参数 | 说明 |
 |---|---|
-| `--headless` | 以无头模式运行浏览器 |
+| `--headless / --no-headless` | 以无头模式运行浏览器（默认：开启） |
 | `--proxy <url>` | 代理服务器 URL（支持 `user:pass@host:port` 格式） |
 | `--os <os>` | 目标操作系统指纹：`windows`、`macos`、`linux`（可重复指定） |
 | `--humanize [seconds]` | 光标拟人化（默认：开启）。传入数字设置最大时长，传入 `false` 关闭 |
@@ -115,29 +115,32 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 ### 示例
 
 ```bash
-# 零配置反检测（humanize + block-webrtc 默认开启）
-camoufox-mcp-python --headless
+# 零配置反检测（headless + humanize + block-webrtc 默认开启）
+camoufox-mcp-python
 
 # 代理 + GeoIP 自动匹配
-camoufox-mcp-python --headless --proxy http://user:pass@proxy.example.com:8080 --geoip
+camoufox-mcp-python --proxy http://user:pass@proxy.example.com:8080 --geoip
+
+# 可视化浏览器调试
+camoufox-mcp-python --no-headless --debug
 
 # 自定义 WebGL 指纹
-camoufox-mcp-python --headless --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
+camoufox-mcp-python --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
 
 # 自定义指纹属性
-camoufox-mcp-python --headless --config '{"navigator.hardwareConcurrency": 8}'
+camoufox-mcp-python --config '{"navigator.hardwareConcurrency": 8}'
 
 # 启用缓存和自定义 Firefox 偏好
-camoufox-mcp-python --headless --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
+camoufox-mcp-python --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
 
 # 隐私加固模式
-camoufox-mcp-python --headless --block-webgl --block-images
+camoufox-mcp-python --block-webgl --block-images
 
 # 关闭默认反检测（调试用）
-camoufox-mcp-python --humanize false --no-block-webrtc --debug
+camoufox-mcp-python --no-headless --humanize false --no-block-webrtc --debug
 
 # 启用 JavaScript 执行
-camoufox-mcp-python --headless --caps dangerous
+camoufox-mcp-python --caps dangerous
 ```
 
 ## 可用工具

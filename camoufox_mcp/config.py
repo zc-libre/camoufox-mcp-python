@@ -123,7 +123,7 @@ class CamoufoxConfig:
     block_images: bool = False
     disable_coop: bool = False
     geoip: bool | str | None = None
-    headless: bool = False
+    headless: bool = True
     user_data_dir: Path = field(default_factory=lambda: DEFAULT_USER_DATA_DIR.expanduser())
     caps: frozenset[str] = field(default_factory=frozenset)
     locale: str | list[str] | None = None
