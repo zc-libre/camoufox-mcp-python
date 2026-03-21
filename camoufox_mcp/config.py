@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from argparse import Namespace
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,9 +34,9 @@ def _normalize_scalar_or_list(values: list[str] | None) -> str | list[str] | Non
     return normalized
 
 
-def _parse_humanize(raw: str | None) -> bool | float:
+def _parse_humanize(raw: str | None, *, default: bool | float = True) -> bool | float:
     if raw is None:
-        return False
+        return default
     lowered = raw.strip().lower()
     if lowered in {"", "true", "yes", "on"}:
         return True
@@ -78,6 +79,27 @@ def _parse_proxy(raw: str | None) -> dict[str, str] | None:
     return proxy
 
 
+def _parse_webgl_config(raw: str | None) -> tuple[str, str] | None:
+    if not raw:
+        return None
+    parts = [part.strip() for part in raw.split(",", 1)]
+    if len(parts) != 2 or not all(parts):
+        raise ValueError("--webgl-config must be 'vendor,renderer'")
+    return (parts[0], parts[1])
+
+
+def _parse_json_dict(raw: str | None, name: str) -> dict[str, Any] | None:
+    if not raw:
+        return None
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"--{name} must be valid JSON: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"--{name} must be a JSON object")
+    return value
+
+
 def _parse_window(raw: str | None) -> tuple[int, int] | None:
     if not raw:
         return None
@@ -95,8 +117,8 @@ def _parse_window(raw: str | None) -> tuple[int, int] | None:
 class CamoufoxConfig:
     proxy: dict[str, str] | None = None
     os: str | list[str] | None = None
-    humanize: bool | float = False
-    block_webrtc: bool = False
+    humanize: bool | float = True
+    block_webrtc: bool = True
     block_webgl: bool = False
     block_images: bool = False
     disable_coop: bool = False
@@ -109,6 +131,15 @@ class CamoufoxConfig:
     persistent_context: bool = True
     default_timeout_ms: int = 30_000
     navigation_timeout_ms: int = 30_000
+    webgl_config: tuple[str, str] | None = None
+    addons: list[str] | None = None
+    exclude_addons: list[str] | None = None
+    config: dict[str, Any] | None = None
+    fingerprint: Any | None = None
+    enable_cache: bool = False
+    firefox_user_prefs: dict[str, Any] | None = None
+    i_know_what_im_doing: bool = False
+    debug: bool = False
 
     @classmethod
     def from_cli_args(cls, args: Namespace) -> CamoufoxConfig:
@@ -134,6 +165,14 @@ class CamoufoxConfig:
             caps=caps,
             locale=_normalize_scalar_or_list(args.locale),
             window=_parse_window(args.window),
+            webgl_config=_parse_webgl_config(args.webgl_config),
+            addons=_split_repeated_csv(args.addons) or None,
+            exclude_addons=_split_repeated_csv(args.exclude_addons) or None,
+            config=_parse_json_dict(args.config, "config"),
+            enable_cache=args.enable_cache,
+            firefox_user_prefs=_parse_json_dict(args.firefox_user_prefs, "firefox-user-prefs"),
+            i_know_what_im_doing=args.i_know_what_im_doing,
+            debug=args.debug,
         )
 
     def to_launch_kwargs(self) -> dict[str, Any]:
@@ -164,6 +203,28 @@ class CamoufoxConfig:
             launch_kwargs["block_webgl"] = True
         if self.disable_coop:
             launch_kwargs["disable_coop"] = True
+        if self.webgl_config is not None:
+            launch_kwargs["webgl_config"] = self.webgl_config
+        if self.addons is not None:
+            launch_kwargs["addons"] = list(self.addons)
+        if self.exclude_addons is not None:
+            from camoufox.addons import DefaultAddons
+
+            launch_kwargs["exclude_addons"] = [
+                DefaultAddons[name] for name in self.exclude_addons
+            ]
+        if self.config is not None:
+            launch_kwargs["config"] = dict(self.config)
+        if self.fingerprint is not None:
+            launch_kwargs["fingerprint"] = self.fingerprint
+        if self.enable_cache:
+            launch_kwargs["enable_cache"] = True
+        if self.firefox_user_prefs is not None:
+            launch_kwargs["firefox_user_prefs"] = dict(self.firefox_user_prefs)
+        if self.i_know_what_im_doing:
+            launch_kwargs["i_know_what_im_doing"] = True
+        if self.debug:
+            launch_kwargs["debug"] = True
         return launch_kwargs
 
     def has_capability(self, name: str) -> bool:

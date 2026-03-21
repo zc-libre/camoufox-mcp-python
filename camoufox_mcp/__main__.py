@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--humanize",
         nargs="?",
         const="true",
-        help="Enable cursor humanization, or pass a max duration in seconds.",
+        help="Cursor humanization (default: on). Pass a number for max duration in seconds, or 'false' to disable.",
     )
     parser.add_argument(
         "--geoip",
@@ -41,7 +41,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--headless", action="store_true", help="Run the browser headlessly.")
     parser.add_argument(
-        "--block-webrtc", action="store_true", help="Disable WebRTC to reduce leaks."
+        "--block-webrtc",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Disable WebRTC to reduce leaks (default: on).",
     )
     parser.add_argument(
         "--block-webgl", action="store_true", help="Disable WebGL for special cases."
@@ -63,6 +66,43 @@ def build_parser() -> argparse.ArgumentParser:
         "--caps",
         action="append",
         help="Optional comma-separated capability groups to enable. Currently: dangerous.",
+    )
+    parser.add_argument(
+        "--webgl-config",
+        help="WebGL vendor/renderer pair, e.g. 'Intel Inc.,Intel(R) UHD Graphics 620'.",
+    )
+    parser.add_argument(
+        "--addons",
+        action="append",
+        help="Paths to extracted Firefox addons. Repeat or comma-separate for multiple.",
+    )
+    parser.add_argument(
+        "--exclude-addons",
+        action="append",
+        help="Default addons to exclude, e.g. UBO. Repeat or comma-separate for multiple.",
+    )
+    parser.add_argument(
+        "--config",
+        help="Camoufox fingerprint properties as a JSON string.",
+    )
+    parser.add_argument(
+        "--enable-cache",
+        action="store_true",
+        help="Cache previous pages and requests (uses more memory).",
+    )
+    parser.add_argument(
+        "--firefox-user-prefs",
+        help="Firefox user preferences as a JSON string.",
+    )
+    parser.add_argument(
+        "--i-know-what-im-doing",
+        action="store_true",
+        help="Silence Camoufox warnings for advanced configurations.",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print the config being sent to Camoufox.",
     )
     return parser
 

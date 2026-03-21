@@ -14,11 +14,17 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that p
 
 - **Anti-detect browser fingerprinting** — Camoufox automatically spoofs browser fingerprints to bypass bot detection
 - **Ref-based accessibility snapshots** — Interact with page elements via accessibility refs, no CSS selectors needed
-- **Human-like cursor movement** — Optional cursor humanization for realistic interactions
+- **Human-like cursor movement** — Cursor humanization enabled by default for realistic interactions
+- **WebRTC leak protection** — WebRTC blocked by default to prevent IP leaks
 - **Persistent browser profile** — Maintain session state, cookies, and login across runs
 - **GeoIP auto-matching** — Automatically match browser locale/timezone to proxy location
 - **Proxy support** — Full proxy support including authentication
-- **Privacy controls** — Block WebRTC, WebGL, and image loading to reduce leaks and bandwidth
+- **WebGL fingerprint control** — Specify WebGL vendor/renderer pair or block entirely
+- **Custom addons** — Load custom Firefox addons or exclude defaults like uBlock Origin
+- **Advanced fingerprint config** — Override any BrowserForge fingerprint property or use a custom fingerprint
+- **Firefox preferences** — Set custom Firefox user preferences
+- **Browser caching** — Optional page/request caching for performance
+- **Privacy controls** — Block WebGL and image loading to reduce leaks and bandwidth
 - **Multi-tab management** — Create, close, select, and list browser tabs
 - **Modal & dialog handling** — Handle JavaScript dialogs and file choosers
 - **Console & network monitoring** — Inspect console messages and network requests
@@ -76,7 +82,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.1.0", "camoufox-mcp-python", "--headless"]
+      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python", "--headless"]
     }
   }
 }
@@ -89,28 +95,48 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 | `--headless` | Run the browser in headless mode |
 | `--proxy <url>` | Proxy server URL (supports `user:pass@host:port`) |
 | `--os <os>` | Target OS fingerprint: `windows`, `macos`, `linux` (repeatable) |
-| `--humanize [seconds]` | Enable human-like cursor movement (optionally set max duration) |
+| `--humanize [seconds]` | Cursor humanization (default: on). Pass a number for max duration, or `false` to disable |
 | `--geoip [ip]` | Auto-match locale/timezone to proxy IP, or specify a target IP |
 | `--locale <locale>` | Browser locale(s), e.g. `en-US` (repeatable, comma-separated) |
 | `--window <WxH>` | Outer window size, e.g. `1280x720` |
-| `--block-webrtc` | Disable WebRTC to prevent IP leaks |
+| `--block-webrtc / --no-block-webrtc` | Block WebRTC to prevent IP leaks (default: on) |
 | `--block-webgl` | Disable WebGL |
 | `--block-images` | Block image requests to reduce bandwidth |
 | `--disable-coop` | Disable COOP for cross-origin iframe interactions |
 | `--user-data-dir <path>` | Persistent profile directory (default: `~/.camoufox-mcp-python/profile`) |
 | `--caps <groups>` | Enable capability groups, e.g. `dangerous` (enables `browser_evaluate`) |
+| `--webgl-config <v,r>` | WebGL vendor/renderer pair, e.g. `"Intel Inc.,Intel(R) UHD Graphics 620"` |
+| `--addons <paths>` | Paths to extracted Firefox addons (repeatable, comma-separated) |
+| `--exclude-addons <names>` | Default addons to exclude, e.g. `UBO` (repeatable, comma-separated) |
+| `--config <json>` | Camoufox fingerprint properties as a JSON string |
+| `--enable-cache` | Cache previous pages and requests (uses more memory) |
+| `--firefox-user-prefs <json>` | Firefox user preferences as a JSON string |
+| `--i-know-what-im-doing` | Silence Camoufox warnings for advanced configurations |
+| `--debug` | Print the config being sent to Camoufox |
 
 ### Examples
 
 ```bash
-# Headless with proxy and GeoIP matching
+# Zero-config anti-detection (humanize + block-webrtc on by default)
+camoufox-mcp-python --headless
+
+# With proxy and GeoIP matching
 camoufox-mcp-python --headless --proxy http://user:pass@proxy.example.com:8080 --geoip
 
-# Visible browser with humanized cursor and custom window size
-camoufox-mcp-python --humanize --window 1920x1080
+# Custom WebGL fingerprint
+camoufox-mcp-python --headless --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
+
+# Custom fingerprint properties
+camoufox-mcp-python --headless --config '{"navigator.hardwareConcurrency": 8}'
+
+# With caching and custom Firefox prefs
+camoufox-mcp-python --headless --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
 
 # Privacy-hardened mode
-camoufox-mcp-python --headless --block-webrtc --block-webgl --block-images
+camoufox-mcp-python --headless --block-webgl --block-images
+
+# Disable default anti-detection for debugging
+camoufox-mcp-python --humanize false --no-block-webrtc --debug
 
 # Enable JavaScript evaluation
 camoufox-mcp-python --headless --caps dangerous

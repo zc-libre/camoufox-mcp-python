@@ -12,11 +12,17 @@
 
 - **浏览器指纹反检测** — Camoufox 自动伪装浏览器指纹，绕过机器人检测
 - **基于 ref 的无障碍快照** — 通过无障碍引用与页面元素交互，无需 CSS 选择器
-- **类人光标移动** — 可选的光标拟人化，模拟真实用户操作
+- **类人光标移动** — 默认开启光标拟人化，模拟真实用户操作
+- **WebRTC 泄露防护** — 默认屏蔽 WebRTC，防止真实 IP 泄露
 - **持久化浏览器配置** — 跨会话保持登录状态、Cookie 和浏览数据
 - **GeoIP 自动匹配** — 自动根据代理 IP 匹配浏览器语言/时区
 - **代理支持** — 完整的代理支持，包括用户名密码认证
-- **隐私保护** — 可屏蔽 WebRTC、WebGL 和图片加载，减少信息泄露和带宽消耗
+- **WebGL 指纹控制** — 指定 WebGL vendor/renderer 对或完全屏蔽
+- **自定义插件** — 加载自定义 Firefox 插件或排除默认插件（如 uBlock Origin）
+- **高级指纹配置** — 覆盖任意 BrowserForge 指纹属性或使用自定义指纹
+- **Firefox 偏好设置** — 设置自定义 Firefox 用户偏好
+- **浏览器缓存** — 可选的页面/请求缓存以提升性能
+- **隐私保护** — 可屏蔽 WebGL 和图片加载，减少信息泄露和带宽消耗
 - **多标签页管理** — 创建、关闭、切换和列出浏览器标签页
 - **弹窗与对话框处理** — 处理 JavaScript 对话框和文件选择器
 - **控制台与网络监控** — 查看控制台消息和网络请求
@@ -74,7 +80,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.1.0", "camoufox-mcp-python", "--headless"]
+      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python", "--headless"]
     }
   }
 }
@@ -87,28 +93,48 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python --hea
 | `--headless` | 以无头模式运行浏览器 |
 | `--proxy <url>` | 代理服务器 URL（支持 `user:pass@host:port` 格式） |
 | `--os <os>` | 目标操作系统指纹：`windows`、`macos`、`linux`（可重复指定） |
-| `--humanize [seconds]` | 启用类人光标移动（可选设置最大持续时间） |
+| `--humanize [seconds]` | 光标拟人化（默认：开启）。传入数字设置最大时长，传入 `false` 关闭 |
 | `--geoip [ip]` | 自动匹配代理 IP 对应的语言/时区，或指定目标 IP |
 | `--locale <locale>` | 浏览器语言环境，如 `zh-CN`（可重复指定，逗号分隔） |
 | `--window <WxH>` | 外部窗口大小，如 `1280x720` |
-| `--block-webrtc` | 禁用 WebRTC 防止 IP 泄露 |
+| `--block-webrtc / --no-block-webrtc` | 屏蔽 WebRTC 防止 IP 泄露（默认：开启） |
 | `--block-webgl` | 禁用 WebGL |
 | `--block-images` | 屏蔽图片请求以节省带宽 |
 | `--disable-coop` | 禁用 COOP 以允许跨域 iframe 交互 |
 | `--user-data-dir <path>` | 持久化配置目录（默认：`~/.camoufox-mcp-python/profile`） |
 | `--caps <groups>` | 启用功能组，如 `dangerous`（启用 `browser_evaluate`） |
+| `--webgl-config <v,r>` | WebGL vendor/renderer 对，如 `"Intel Inc.,Intel(R) UHD Graphics 620"` |
+| `--addons <paths>` | 已解压的 Firefox 插件路径（可重复指定，逗号分隔） |
+| `--exclude-addons <names>` | 排除的默认插件，如 `UBO`（可重复指定，逗号分隔） |
+| `--config <json>` | Camoufox 指纹属性 JSON 字符串 |
+| `--enable-cache` | 缓存页面和请求（占用更多内存） |
+| `--firefox-user-prefs <json>` | Firefox 用户偏好设置 JSON 字符串 |
+| `--i-know-what-im-doing` | 静默 Camoufox 高级配置警告 |
+| `--debug` | 打印发送给 Camoufox 的配置信息 |
 
 ### 示例
 
 ```bash
-# 无头模式 + 代理 + GeoIP 自动匹配
+# 零配置反检测（humanize + block-webrtc 默认开启）
+camoufox-mcp-python --headless
+
+# 代理 + GeoIP 自动匹配
 camoufox-mcp-python --headless --proxy http://user:pass@proxy.example.com:8080 --geoip
 
-# 可视化浏览器 + 光标拟人化 + 自定义窗口大小
-camoufox-mcp-python --humanize --window 1920x1080
+# 自定义 WebGL 指纹
+camoufox-mcp-python --headless --webgl-config "Intel Inc.,Intel(R) UHD Graphics 620" --os windows
+
+# 自定义指纹属性
+camoufox-mcp-python --headless --config '{"navigator.hardwareConcurrency": 8}'
+
+# 启用缓存和自定义 Firefox 偏好
+camoufox-mcp-python --headless --enable-cache --firefox-user-prefs '{"dom.webnotifications.enabled": false}'
 
 # 隐私加固模式
-camoufox-mcp-python --headless --block-webrtc --block-webgl --block-images
+camoufox-mcp-python --headless --block-webgl --block-images
+
+# 关闭默认反检测（调试用）
+camoufox-mcp-python --humanize false --no-block-webrtc --debug
 
 # 启用 JavaScript 执行
 camoufox-mcp-python --headless --caps dangerous
