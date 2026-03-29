@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "camoufox-mcp-python"
-version = "0.2.1"
+version = "0.3.0"
 description = "Camoufox-powered MCP browser server with ref-based accessibility tools."
 readme = "README.md"
 requires-python = ">=3.10"

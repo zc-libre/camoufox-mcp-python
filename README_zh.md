@@ -14,7 +14,7 @@
 - **基于 ref 的无障碍快照** — 通过无障碍引用与页面元素交互，无需 CSS 选择器
 - **类人光标移动** — 默认开启光标拟人化，模拟真实用户操作
 - **WebRTC 泄露防护** — 默认屏蔽 WebRTC，防止真实 IP 泄露
-- **持久化浏览器配置** — 跨会话保持登录状态、Cookie 和浏览数据
+- **默认隔离浏览器配置** — 每个 server 进程都会创建独立的临时 profile，并在关闭时删除；仅当显式传入 `--user-data-dir` 时才复用持久化 profile
 - **GeoIP 自动匹配** — 自动根据代理 IP 匹配浏览器语言/时区
 - **代理支持** — 完整的代理支持，包括用户名密码认证
 - **WebGL 指纹控制** — 指定 WebGL vendor/renderer 对或完全屏蔽
@@ -101,7 +101,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python"
 | `--block-webgl` | 禁用 WebGL |
 | `--block-images` | 屏蔽图片请求以节省带宽 |
 | `--disable-coop` | 禁用 COOP 以允许跨域 iframe 交互 |
-| `--user-data-dir <path>` | 持久化配置目录（默认：`~/.camoufox-mcp-python/profile`） |
+| `--user-data-dir <path>` | 可选的持久化 profile 目录；未传时每个 server 进程都会使用独立临时 profile，并在关闭时删除 |
 | `--caps <groups>` | 启用功能组，如 `dangerous`（启用 `browser_evaluate`） |
 | `--webgl-config <v,r>` | WebGL vendor/renderer 对，如 `"Intel Inc.,Intel(R) UHD Graphics 620"` |
 | `--addons <paths>` | 已解压的 Firefox 插件路径（可重复指定，逗号分隔） |

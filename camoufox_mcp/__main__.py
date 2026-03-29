@@ -64,8 +64,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--user-data-dir",
-        default="~/.camoufox-mcp-python/profile",
-        help="Persistent profile directory. Defaults to ~/.camoufox-mcp-python/profile.",
+        help="Optional persistent profile directory. If omitted, each server process creates an isolated temporary profile and deletes it on exit.",
     )
     parser.add_argument(
         "--caps",

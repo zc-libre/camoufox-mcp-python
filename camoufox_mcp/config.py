@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from argparse import Namespace
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -9,7 +10,13 @@ from urllib.parse import unquote, urlparse
 
 BrowserOs = Literal["windows", "macos", "linux"]
 
-DEFAULT_USER_DATA_DIR = Path("~/.camoufox-mcp-python/profile")
+_PLATFORM_OS_MAP: dict[str, BrowserOs] = {
+    "darwin": "macos",
+    "linux": "linux",
+    "win32": "windows",
+}
+DEFAULT_OS: BrowserOs = _PLATFORM_OS_MAP.get(sys.platform, "linux")
+
 SUPPORTED_CAPABILITIES = frozenset({"dangerous"})
 
 
@@ -116,7 +123,7 @@ def _parse_window(raw: str | None) -> tuple[int, int] | None:
 @dataclass(slots=True)
 class CamoufoxConfig:
     proxy: dict[str, str] | None = None
-    os: str | list[str] | None = None
+    os: str | list[str] | None = field(default_factory=lambda: DEFAULT_OS)
     humanize: bool | float = True
     block_webrtc: bool = True
     block_webgl: bool = False
@@ -124,7 +131,8 @@ class CamoufoxConfig:
     disable_coop: bool = False
     geoip: bool | str | None = None
     headless: bool = True
-    user_data_dir: Path = field(default_factory=lambda: DEFAULT_USER_DATA_DIR.expanduser())
+    user_data_dir: Path | None = None
+    user_data_dir_explicit: bool = False
     caps: frozenset[str] = field(default_factory=frozenset)
     locale: str | list[str] | None = None
     window: tuple[int, int] | None = None
@@ -153,7 +161,7 @@ class CamoufoxConfig:
 
         return cls(
             proxy=_parse_proxy(args.proxy),
-            os=_normalize_scalar_or_list(args.os),
+            os=_normalize_scalar_or_list(args.os) or DEFAULT_OS,
             humanize=_parse_humanize(args.humanize),
             block_webrtc=args.block_webrtc,
             block_webgl=args.block_webgl,
@@ -161,7 +169,8 @@ class CamoufoxConfig:
             disable_coop=args.disable_coop,
             geoip=_parse_geoip(args.geoip),
             headless=args.headless,
-            user_data_dir=Path(args.user_data_dir).expanduser(),
+            user_data_dir=Path(args.user_data_dir).expanduser() if args.user_data_dir else None,
+            user_data_dir_explicit=args.user_data_dir is not None,
             caps=caps,
             locale=_normalize_scalar_or_list(args.locale),
             window=_parse_window(args.window),
@@ -175,16 +184,21 @@ class CamoufoxConfig:
             debug=args.debug,
         )
 
-    def to_launch_kwargs(self) -> dict[str, Any]:
+    def to_launch_kwargs(self, *, user_data_dir: Path | None = None) -> dict[str, Any]:
         launch_kwargs: dict[str, Any] = {
             "persistent_context": self.persistent_context,
             "headless": self.headless,
             "humanize": self.humanize,
         }
         if self.persistent_context:
-            user_data_dir = self.user_data_dir.expanduser()
-            user_data_dir.mkdir(parents=True, exist_ok=True)
-            launch_kwargs["user_data_dir"] = str(user_data_dir)
+            resolved_user_data_dir = user_data_dir or self.user_data_dir
+            if resolved_user_data_dir is None:
+                raise ValueError(
+                    "user_data_dir must be resolved before launch when persistent_context=True"
+                )
+            resolved_user_data_dir = resolved_user_data_dir.expanduser()
+            resolved_user_data_dir.mkdir(parents=True, exist_ok=True)
+            launch_kwargs["user_data_dir"] = str(resolved_user_data_dir)
         if self.proxy:
             launch_kwargs["proxy"] = dict(self.proxy)
         if self.os is not None:

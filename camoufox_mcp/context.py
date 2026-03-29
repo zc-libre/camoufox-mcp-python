@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import shutil
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,7 @@ class AppContext:
         self._playwright: Any | None = None
         self._browser: Browser | None = None
         self._browser_context: BrowserContext | None = None
+        self._ephemeral_user_data_dir: tempfile.TemporaryDirectory[str] | None = None
         self._tabs: list[Tab] = []
         self._current_tab_index: int | None = None
 
@@ -31,9 +33,12 @@ class AppContext:
             self._sync_existing_pages()
             return self._browser_context
 
+        self._cleanup_ephemeral_user_data_dir()
         _repair_camoufox_install_layout()
         self._playwright = await async_playwright().start()
-        launch_kwargs = self.config.to_launch_kwargs()
+        launch_kwargs = self.config.to_launch_kwargs(
+            user_data_dir=self._resolve_user_data_dir()
+        )
         try:
             launched = await AsyncNewBrowser(self._playwright, **launch_kwargs)
         except Exception as exc:
@@ -112,6 +117,29 @@ class AppContext:
         self._playwright = None
         self._tabs.clear()
         self._current_tab_index = None
+
+    def _resolve_user_data_dir(self) -> Path | None:
+        if not self.config.persistent_context:
+            return None
+        if self.config.user_data_dir_explicit:
+            if self.config.user_data_dir is None:
+                raise RuntimeError("Explicit user_data_dir must not be None.")
+            explicit_dir = self.config.user_data_dir.expanduser()
+            explicit_dir.mkdir(parents=True, exist_ok=True)
+            return explicit_dir
+        if self._ephemeral_user_data_dir is None:
+            self._ephemeral_user_data_dir = tempfile.TemporaryDirectory(
+                prefix="camoufox-mcp-python-profile-"
+            )
+        ephemeral_dir = Path(self._ephemeral_user_data_dir.name)
+        ephemeral_dir.mkdir(parents=True, exist_ok=True)
+        return ephemeral_dir
+
+    def _cleanup_ephemeral_user_data_dir(self) -> None:
+        if self._ephemeral_user_data_dir is None:
+            return
+        self._ephemeral_user_data_dir.cleanup()
+        self._ephemeral_user_data_dir = None
 
     def tabs(self) -> list[Tab]:
         return list(self._tabs)
@@ -204,6 +232,7 @@ class AppContext:
                 await playwright.stop()
             except Exception:
                 pass
+        self._cleanup_ephemeral_user_data_dir()
 
     async def close(self) -> None:
         await self.close_browser()

@@ -16,7 +16,7 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that p
 - **Ref-based accessibility snapshots** — Interact with page elements via accessibility refs, no CSS selectors needed
 - **Human-like cursor movement** — Cursor humanization enabled by default for realistic interactions
 - **WebRTC leak protection** — WebRTC blocked by default to prevent IP leaks
-- **Persistent browser profile** — Maintain session state, cookies, and login across runs
+- **Isolated browser profiles by default** — Each server process gets a fresh temporary profile that is deleted on close; pass `--user-data-dir` to reuse a persistent profile
 - **GeoIP auto-matching** — Automatically match browser locale/timezone to proxy location
 - **Proxy support** — Full proxy support including authentication
 - **WebGL fingerprint control** — Specify WebGL vendor/renderer pair or block entirely
@@ -103,7 +103,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python"
 | `--block-webgl` | Disable WebGL |
 | `--block-images` | Block image requests to reduce bandwidth |
 | `--disable-coop` | Disable COOP for cross-origin iframe interactions |
-| `--user-data-dir <path>` | Persistent profile directory (default: `~/.camoufox-mcp-python/profile`) |
+| `--user-data-dir <path>` | Optional persistent profile directory. If omitted, each server process uses an isolated temporary profile that is deleted on close |
 | `--caps <groups>` | Enable capability groups, e.g. `dangerous` (enables `browser_evaluate`) |
 | `--webgl-config <v,r>` | WebGL vendor/renderer pair, e.g. `"Intel Inc.,Intel(R) UHD Graphics 620"` |
 | `--addons <paths>` | Paths to extracted Firefox addons (repeatable, comma-separated) |
