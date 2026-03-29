@@ -82,7 +82,7 @@ codex --mcp-server "npx @anthropic-ai/mcp-proxy -- uvx camoufox-mcp-python"
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.2.0", "camoufox-mcp-python"]
+      "args": ["--from", "camoufox-mcp-python==0.2.1", "camoufox-mcp-python"]
     }
   }
 }

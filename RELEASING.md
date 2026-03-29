@@ -16,7 +16,7 @@ Recommended MCP client configuration after publish:
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["camoufox-mcp-python@0.1.0", "--headless"]
+      "args": ["camoufox-mcp-python@0.2.1", "--headless"]
     }
   }
 }
@@ -29,7 +29,7 @@ Strict package pin form:
   "mcpServers": {
     "camoufox": {
       "command": "uvx",
-      "args": ["--from", "camoufox-mcp-python==0.1.0", "camoufox-mcp-python", "--headless"]
+      "args": ["--from", "camoufox-mcp-python==0.2.1", "camoufox-mcp-python", "--headless"]
     }
   }
 }

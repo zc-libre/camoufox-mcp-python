@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from .context import AppContext
     from .tab import Tab
 
+MAX_INLINE_EVENT_LINES = 10
+MAX_INLINE_EVENT_CHARS = 280
+
 
 @dataclass(slots=True)
 class ImageAttachment:
@@ -69,10 +72,10 @@ class Response:
             if snapshot_result.yaml:
                 sections.append(("Snapshot", [f"```yaml\n{snapshot_result.yaml.rstrip()}\n```"]))
             if snapshot_result.events:
-                sections.append(("Events", list(snapshot_result.events)))
+                sections.append(("Events", render_event_markdown(snapshot_result.events)))
 
         if self._events:
-            sections.append(("Events", list(self._events)))
+            sections.append(("Events", render_event_markdown(self._events)))
 
         if not sections:
             sections.append(("Result", ["OK"]))
@@ -123,3 +126,20 @@ def render_modal_states(modal_states: list[ModalState]) -> list[str]:
     if not modal_states:
         return ["- There is no modal state present"]
     return [state.render() for state in modal_states]
+
+
+def render_event_markdown(events: list[str]) -> list[str]:
+    rendered = [_truncate_line(event) for event in events[:MAX_INLINE_EVENT_LINES]]
+    remaining = len(events) - len(rendered)
+    if remaining > 0:
+        rendered.append(
+            f"- {remaining} more events omitted. Use browser_console_messages for full details."
+        )
+    return rendered
+
+
+def _truncate_line(line: str) -> str:
+    normalized = line.strip()
+    if len(normalized) <= MAX_INLINE_EVENT_CHARS:
+        return normalized
+    return f"{normalized[: MAX_INLINE_EVENT_CHARS - 3].rstrip()}..."
